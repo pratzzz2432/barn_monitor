@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "932316550763",
+    "project_id": "barn-d496f",
+    "storage_bucket": "barn-d496f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932316550763:android:9f7a3911566e1d11ee032e",
+        "android_client_info": {
+          "package_name": "com.example.barn_monitor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg6AOnh8E9N0GKG14bk3ctB2WboZPxDLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
