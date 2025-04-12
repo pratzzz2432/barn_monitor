@@ -1,6 +1,6 @@
-# Smart Cattle Farm Gas Monitoring System
+# BarnAir Monitor: Smart Cattle Farm Gas Monitoring System
 
-This repository contains a comprehensive IoT and AI-based solution for monitoring, predicting, and alerting farmers about harmful gas emissions in cattle farms. The system uses a network of sensors to detect methane, ammonia, and carbon monoxide levels, along with temperature and humidity data, to provide real-time monitoring and predictive analytics.
+This repository contains a comprehensive IoT and AI-based solution for monitoring, predicting, and alerting farmers about harmful gas emissions in cattle farms. The BarnAir Monitor system uses a network of sensors to detect methane, ammonia, and carbon monoxide levels, along with temperature and humidity data, to provide real-time monitoring and predictive analytics through an intuitive mobile application.
 
 ## Table of Contents
 - [System Overview](#system-overview)
@@ -19,9 +19,9 @@ This repository contains a comprehensive IoT and AI-based solution for monitorin
 
 ## System Overview
 
-The Smart Cattle Farm Gas Monitoring System integrates IoT sensors, cloud computing, machine learning, and mobile technology to create a comprehensive gas monitoring solution for cattle farms. The system continuously monitors harmful gases that can affect cattle health and farm safety, providing both real-time alerts and predictive insights.
+The BarnAir Monitor system integrates IoT sensors, cloud computing, machine learning, and mobile technology to create a comprehensive gas monitoring solution for cattle farms. The system continuously monitors harmful gases that can affect cattle health and farm safety, providing both real-time alerts and predictive insights.
 
-![System Architecture Diagram](diagram-placeholder.png)
+![System Architecture Diagram](arch.png)
 
 ### Data Flow
 
@@ -29,7 +29,7 @@ The Smart Cattle Farm Gas Monitoring System integrates IoT sensors, cloud comput
 2. **Data Transmission**: The ESP32 controller processes readings and transmits data to Firebase
 3. **Cloud Storage & Processing**: Firebase stores the data and makes it available to the ML model and mobile app
 4. **Predictive Analysis**: ML algorithms analyze historical data to predict dangerous gas level trends
-5. **User Interface**: The Flutter mobile app displays real-time readings, alerts, and predictions to farmers
+5. **User Interface**: The BarnAir Monitor Flutter app displays real-time readings, alerts, and predictions to farmers
 
 ## Key Features
 
@@ -39,7 +39,7 @@ The Smart Cattle Farm Gas Monitoring System integrates IoT sensors, cloud comput
 - **Multi-level Alerting**: Warning and danger thresholds with visual indicators in the app
 - **Historical Data Analysis**: Time-series visualization of gas trends
 - **Mobile Accessibility**: User-friendly Flutter app for monitoring farm conditions
-- **Offline Functionality**: SMS fallback alerts for areas with limited connectivity
+- **Offline Functionality**: Local notification alerts even without connectivity
 - **Energy Efficiency**: Optional solar power and battery setup with deep sleep logic
 
 ## Hardware Components
@@ -80,7 +80,14 @@ ESP32 Pin Connections:
 
 ### Firebase Configuration
 
-The system uses Firebase Realtime Database to store sensor readings and provide data access to both the mobile app and ML models.
+The system uses Firebase services to handle authentication, data storage, and notifications:
+
+- **Firebase Authentication**: Handles user signup and login with email/phone and OTP verification
+- **Firebase Realtime Database**: Stores sensor readings and provides real-time data access
+- **Firebase Cloud Messaging**: Delivers push notifications for critical alerts
+- **Firebase Cloud Functions**: Processes data and triggers alerts
+
+
 
 #### Security Rules
 Firebase security rules are configured to:
@@ -116,25 +123,42 @@ The ML pipeline is implemented in Python using TensorFlow/Keras and is hosted in
 
 ## Mobile Application
 
-### Flutter App Features
+### BarnAir Monitor App
 
-The mobile application provides a user-friendly interface for farmers to monitor their cattle farm environment.
+The BarnAir Monitor mobile application provides a user-friendly interface for farmers to monitor their cattle farm environment.
 
-#### Key Screens
-1. **Dashboard**: Real-time gas level displays with color-coded status indicators
-2. **Analytics**: Historical charts showing gas trends over time
-3. **Predictions**: Forecasted gas levels with confidence intervals
-4. **Alerts**: List of active and past alerts with recommended actions
-5. **Settings**: Configuration options for alert thresholds and notification preferences
+#### App Screens
 
-#### Alert System
-- **Visual alerts**: Color-coded indicators (green, yellow, red)
-- **Push notifications**: Real-time alerts for threshold breaches
-- **SMS fallback**: Text message alerts for farmers without reliable internet
-- **Actionable insights**: Specific recommendations to address rising gas levels
+1. **Login/Signup Screen**
+   - Authentication via phone/email with password fields
+   - OTP verification for new users
+   - Secure Firebase Authentication integration
+   - Streamlined onboarding flow
 
-#### Offline Functionality
-The app includes offline caching of recent data to ensure farmers can access critical information even with intermittent connectivity.
+2. **Main Dashboard Screen**
+   - Real-time monitoring of critical barn conditions
+   - Color-coded gas level gauges (methane, ammonia, CO)
+   - Temperature and humidity visualization bars
+   - Emergency "VENTILATE NOW" button for immediate action
+   - WebSocket connection for real-time data updates
+
+3. **Trends Screen**
+   - Historical data visualization with customizable time ranges (Day/Week/Month)
+   - Line graphs showing environmental parameter patterns
+   - AI-powered recommendations based on LSTM analysis
+   - Data caching for offline viewing
+
+4. **Alerts Screen**
+   - Notification center for critical condition warnings
+   - Priority-based alert display with visual indicators
+   - Action buttons for alert management (Dismiss/Mark Resolved)
+   - Integration with Firebase Cloud Messaging
+
+#### Design Elements
+- Consistent color scheme: green (#4CAF50) for safe conditions, red (#F44336) for danger
+- Intuitive icons: methane (💨), temperature (🌡️), barns (🐄)
+- Responsive layout that works across different device sizes
+- Offline caching to ensure access to critical information
 
 ## Installation and Setup
 
@@ -162,9 +186,10 @@ platformio run --target upload
 
 #### Firebase Setup
 1. Create a new Firebase project in the Firebase console
-2. Enable Realtime Database
-3. Set up authentication methods (email/password for app, service accounts for sensors)
+2. Enable Authentication, Realtime Database, Cloud Messaging, and Cloud Functions
+3. Set up authentication methods (email/phone with OTP for app, service accounts for sensors)
 4. Import the database rules from `firebase/rules.json`
+5. Deploy cloud functions for alert processing
 
 #### ML Model Deployment
 1. Open the Google Colab notebook in `ml/gas_prediction_model.ipynb`
@@ -186,16 +211,18 @@ flutter run
 ## Usage Guide
 
 ### Initial Setup
-1. Install the mobile app on your device
-2. Create an account and register your farm
-3. Add sensor nodes to your farm profile
-4. Configure alert thresholds based on your specific farm requirements
+1. Install the BarnAir Monitor app on your device
+2. Create an account via phone number or email
+3. Verify your account with the OTP
+4. Register your farm
+5. Configure alert thresholds based on your specific farm requirements
 
 ### Daily Operation
 1. The system automatically collects and analyzes data once powered on
 2. Check the mobile app dashboard regularly for current gas levels
-3. Review predictions to plan preventive measures
+3. Review trends screen to see historical patterns
 4. Respond to alerts according to recommended actions
+5. Use the "VENTILATE NOW" button in emergency situations
 
 ### Best Practices
 - Place sensors at strategic locations (near manure pits, central barn areas, ventilation outlets)
@@ -207,24 +234,34 @@ flutter run
 
 ```
 /
-├── firmware/              # ESP32 code and sensor integration
-│   ├── src/               # Source code for the firmware
-│   ├── lib/               # Libraries for sensors and communication
-│   └── config.example.h   # Example configuration file
-├── cloud/                 # Firebase configuration and cloud functions
-│   ├── functions/         # Cloud functions for data processing
-│   └── rules.json         # Database security rules
-├── ml/                    # Machine learning models and analysis
-│   ├── data_processing/   # Scripts for data preparation
-│   ├── models/            # Trained model files
-│   └── notebooks/         # Jupyter/Colab notebooks
-├── mobile_app/            # Flutter application code
-│   ├── lib/               # Main application code
-│   ├── assets/            # Images and static assets
-│   └── test/              # Unit and integration tests
-└── docs/                  # Documentation and diagrams
-    ├── images/            # System diagrams and screenshots
-    └── manuals/           # User and technical manuals
+├── firmware/                # ESP32 code and sensor integration
+│   ├── src/                 # Source code for the firmware
+│   ├── lib/                 # Libraries for sensors and communication
+│   └── config.example.h     # Example configuration file
+├── cloud/                   # Firebase configuration and cloud functions
+│   ├── functions/           # Cloud functions for data processing
+│   └── rules.json           # Database security rules
+├── ml/                      # Machine learning models and analysis
+│   ├── data_processing/     # Scripts for data preparation
+│   ├── models/              # Trained model files
+│   └── notebooks/           # Jupyter/Colab notebooks
+├── mobile_app/              # Flutter application code
+│   ├── lib/
+│   │   ├── main.dart        # Application entry point
+│   │   ├── screens/         # Application screens
+│   │   │   ├── login_screen.dart
+│   │   │   ├── dashboard_screen.dart
+│   │   │   ├── trends_screen.dart
+│   │   │   └── alerts_screen.dart
+│   │   ├── widgets/         # Reusable UI components
+│   │   ├── services/        # Firebase and API services
+│   │   ├── models/          # Data models
+│   │   └── utils/           # Helper utilities
+│   ├── assets/              # Images and static assets
+│   └── test/                # Unit and integration tests
+└── docs/                    # Documentation and diagrams
+    ├── images/              # System diagrams and screenshots
+    └── manuals/             # User and technical manuals
 ```
 
 ## Future Enhancements
@@ -251,6 +288,10 @@ The system has several planned future enhancements:
 - **Issue**: ESP32 not connecting to Wi-Fi
 - **Solution**: Verify Wi-Fi credentials and signal strength at sensor location
 
+#### Authentication Problems
+- **Issue**: Not receiving OTP for verification
+- **Solution**: Check phone signal or email spam folder; try alternative verification method
+
 #### Battery Problems
 - **Issue**: Short battery life in solar-powered setup
 - **Solution**: Adjust deep sleep intervals or increase solar panel capacity
@@ -275,4 +316,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-This project was developed to improve animal welfare and farm safety by providing early detection and prediction of harmful gas levels in cattle farming environments.
+BarnAir Monitor was developed to improve animal welfare and farm safety by providing early detection and prediction of harmful gas levels in cattle farming environments.
